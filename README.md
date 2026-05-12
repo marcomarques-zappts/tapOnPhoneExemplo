@@ -22,15 +22,15 @@ App de exemplo em SwiftUI demonstrando a integração com o SDK **TapOnPhone** (
 
 Na primeira execução, acesse a aba **Configurações** (ícone de engrenagem) e preencha:
 
-| Campo | Descrição |
-|---|---|
-| Base URL | URL do ambiente (ex: `https://api-hti.auttar.com.br`) |
-| Usuário SSO | Client ID fornecido pela Auttar |
-| Senha SSO | Client Secret fornecido pela Auttar |
-| CNPJ/CPF | Documento do estabelecimento |
-| Bundle ID | Bundle identifier registrado (`br.com.auttar.app.getTap`) |
+| Campo | Descrição | Sensível |
+|---|---|---|
+| Base URL | URL do ambiente da API | ⚠️ Sim |
+| Usuário SSO | Client ID fornecido pela Auttar | ⚠️ Sim |
+| Senha SSO | Client Secret fornecido pela Auttar | ⚠️ Sim |
+| CNPJ/CPF | Documento do estabelecimento | ⚠️ Sim |
+| Bundle ID | Bundle identifier registrado na Apple | ⚠️ Sim |
 
-As credenciais são salvas localmente via `UserDefaults`.
+> ⚠️ **Todos os campos são dados sensíveis.** Nunca os compartilhe publicamente, exponha em logs ou commite em repositórios. As credenciais são salvas localmente via `UserDefaults` e não são incluídas no código-fonte.
 
 ## Fluxo de autenticação
 
