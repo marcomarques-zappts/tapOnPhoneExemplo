@@ -1,0 +1,656 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2.4 effective-5.10 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)
+// swift-module-flags: -target arm64-apple-ios18.4-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name TapOnPhone
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.4
+import Foundation
+import ProximityReader
+import Security
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public protocol TapOnPhoneConfigurationProtocol {
+  var frameworkVersion: Swift.String { get }
+  var terminalID: Swift.String { get }
+}
+public protocol TapOnPhoneOperationsProtocol {
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func authenticateMonoEC(_ parameters: TapOnPhone.MonoECAuthParameters) async -> TapOnPhone.MonoECAuthResult
+  #endif
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func authenticationSilentLogin(_ parameters: TapOnPhone.SilentLoginParams) async -> TapOnPhone.LoginResult
+  #endif
+  func setAccessToken(_ tokens: TapOnPhone.AuthenticationTokens) -> Swift.Bool
+  #if compiler(>=5.3) && $NonescapableTypes && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func checkForExpiredToken() async throws -> Swift.String?
+  #endif
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func executeCreditCardPayment(value: Foundation.Decimal, installmentType: TapOnPhone.InstallmentType, installmentNumber: Swift.Int) async throws -> TapOnPhone.CardPaymentResult
+  #endif
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func executeDebitCardPayment(value: Foundation.Decimal) async throws -> TapOnPhone.CardPaymentResult
+  #endif
+  func logout()
+}
+public enum AuthenticationError : Swift.Error {
+  case invalidCredentials
+  case networkError(any Swift.Error)
+  case invalidResponse
+  case serverError(Swift.String)
+  case tokenExpired
+}
+extension TapOnPhone.AuthenticationError : Foundation.LocalizedError, Swift.Equatable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var errorDescription: Swift.String? {
+    get
+  }
+  #endif
+  public static func == (lhs: TapOnPhone.AuthenticationError, rhs: TapOnPhone.AuthenticationError) -> Swift.Bool
+}
+public struct SSORequest : Swift.Codable {
+  public let grantType: Swift.String
+  public enum CodingKeys : Swift.String, Swift.CodingKey {
+    case grantType
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(rawValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(stringValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(intValue: Swift.Int)
+    #endif
+    public typealias RawValue = Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public var intValue: Swift.Int? {
+      get
+    }
+    #endif
+    public var rawValue: Swift.String {
+      get
+    }
+    public var stringValue: Swift.String {
+      get
+    }
+  }
+  public init()
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct TapOnPhoneRequest : Swift.Codable {
+  public let document: Swift.String
+  public let packageName: Swift.String
+  public enum CodingKeys : Swift.String, Swift.CodingKey {
+    case document
+    case packageName
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(rawValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(stringValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(intValue: Swift.Int)
+    #endif
+    public typealias RawValue = Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public var intValue: Swift.Int? {
+      get
+    }
+    #endif
+    public var rawValue: Swift.String {
+      get
+    }
+    public var stringValue: Swift.String {
+      get
+    }
+  }
+  public init(document: Swift.String, packageName: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct SSOResponse : Swift.Codable {
+  public let accessToken: Swift.String
+  public let expiresIn: Swift.Int
+  public let tokenType: Swift.String
+  public let scope: Swift.String
+  public enum CodingKeys : Swift.String, Swift.CodingKey {
+    case accessToken
+    case expiresIn
+    case tokenType
+    case scope
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(rawValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(stringValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(intValue: Swift.Int)
+    #endif
+    public typealias RawValue = Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public var intValue: Swift.Int? {
+      get
+    }
+    #endif
+    public var rawValue: Swift.String {
+      get
+    }
+    public var stringValue: Swift.String {
+      get
+    }
+  }
+  public init(accessToken: Swift.String, expiresIn: Swift.Int, tokenType: Swift.String, scope: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AuthenticationTokens : Swift.Codable {
+  public let ssoToken: Swift.String
+  public let expiresIn: Swift.Int
+  public let creationDate: Foundation.Date
+  public init(ssoToken: Swift.String, expiresIn: Swift.Int, creationDate: Foundation.Date)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct TokensPayload {
+  public let tokens: TapOnPhone.AuthenticationTokens
+  public let appToken: Swift.String
+  public let packageName: Swift.String
+  public let documentBase64: Swift.String
+  public let deviceName: Swift.String?
+  public let nickName: Swift.String?
+  public let user: Swift.String?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(tokens: TapOnPhone.AuthenticationTokens, appToken: Swift.String, packageName: Swift.String, documentBase64: Swift.String, deviceName: Swift.String? = nil, nickName: Swift.String? = nil, user: Swift.String? = nil)
+  #endif
+}
+public enum LoginError : Swift.Error {
+  case invalidInput(message: Swift.String)
+  case network(message: Swift.String)
+  case httpError(code: Swift.Int, message: Swift.String)
+  case decoding(message: Swift.String)
+  case unknown(message: Swift.String = "Unknown error")
+}
+public struct MonoECRequest : Swift.Codable {
+  public let companyDocument: Swift.String
+  public let username: Swift.String
+  public let password: Swift.String
+  public let type: Swift.String
+  public let manufacturer: Swift.String
+  public let model: Swift.String
+  public let storeCode: Swift.String?
+  public let httpsSupport: Swift.String
+  public let identificationType: Swift.String
+  public let identification: Swift.String
+  public enum CodingKeys : Swift.String, Swift.CodingKey {
+    case companyDocument
+    case username
+    case password
+    case type
+    case manufacturer
+    case model
+    case storeCode
+    case httpsSupport
+    case identificationType
+    case identification
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(rawValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(stringValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(intValue: Swift.Int)
+    #endif
+    public typealias RawValue = Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public var intValue: Swift.Int? {
+      get
+    }
+    #endif
+    public var rawValue: Swift.String {
+      get
+    }
+    public var stringValue: Swift.String {
+      get
+    }
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(companyDocument: Swift.String, username: Swift.String, password: Swift.String, type: Swift.String = "1", manufacturer: Swift.String, model: Swift.String, storeCode: Swift.String? = nil, httpsSupport: Swift.String, identificationType: Swift.String, identification: Swift.String)
+  #endif
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct MonoECResponse : Swift.Codable {
+  public let returnCode: Swift.Int?
+  public let message: Swift.String?
+  public let token: Swift.String?
+  public let terminalCode: Swift.String?
+  public let storeName: Swift.String?
+  public let parameters: [TapOnPhone.MonoECParametersItem]?
+  public let intercepted: Swift.Bool?
+  public enum CodingKeys : Swift.String, Swift.CodingKey {
+    case returnCode
+    case message
+    case token
+    case terminalCode
+    case storeName
+    case parameters
+    case intercepted
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(rawValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(stringValue: Swift.String)
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(intValue: Swift.Int)
+    #endif
+    public typealias RawValue = Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public var intValue: Swift.Int? {
+      get
+    }
+    #endif
+    public var rawValue: Swift.String {
+      get
+    }
+    public var stringValue: Swift.String {
+      get
+    }
+  }
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct MonoECErrorResponse : Swift.Codable {
+  public let status: Swift.Int
+  public let message: Swift.String
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct MonoECParametersItem : Swift.Codable {
+  public let id: Swift.String
+  public let valor: Swift.String
+  public init(id: Swift.String, valor: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct MonoECConfiguration : Swift.Codable {
+  public let token: Swift.String
+  public let terminalCode: Swift.String
+  public let storeName: Swift.String
+  public let companyDocument: Swift.String
+  public let username: Swift.String
+  public let parameters: [TapOnPhone.MonoECParametersItem]?
+  public let certificateData: Foundation.Data?
+  public let urlCTFPrimary: Swift.String?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(token: Swift.String, terminalCode: Swift.String, storeName: Swift.String, companyDocument: Swift.String, username: Swift.String, parameters: [TapOnPhone.MonoECParametersItem]? = nil, certificateData: Foundation.Data? = nil, urlCTFPrimary: Swift.String? = nil)
+  #endif
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct MonoECAuthParameters {
+  public let companyDocument: Swift.String
+  public let username: Swift.String
+  public let password: Swift.String
+  public let storeCode: Swift.String?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(companyDocument: Swift.String, username: Swift.String, password: Swift.String, storeCode: Swift.String? = nil)
+  #endif
+}
+public struct MonoECAuthResult {
+  public let isSuccessful: Swift.Bool
+  public let statusCode: Swift.Int
+  public let message: Swift.String
+  public let configuration: TapOnPhone.MonoECConfiguration?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(isSuccessful: Swift.Bool, statusCode: Swift.Int, message: Swift.String, configuration: TapOnPhone.MonoECConfiguration? = nil)
+  #endif
+  public static func success(_ configuration: TapOnPhone.MonoECConfiguration) -> TapOnPhone.MonoECAuthResult
+  public static func fromLoginError(_ error: TapOnPhone.LoginError) -> TapOnPhone.MonoECAuthResult
+  public static func error(statusCode: Swift.Int, message: Swift.String) -> TapOnPhone.MonoECAuthResult
+}
+public struct RequestSilentLogin : Swift.Encodable {
+  public let authID: Swift.String
+  public let accessToken: Swift.String
+  public let appToken: Swift.String
+  public let document: Swift.String
+  public let packageName: Swift.String
+  public let type: Swift.String
+  public let identification: Swift.String
+  public let identificationType: Swift.String
+  public let manufacturer: Swift.String
+  public let model: Swift.String
+  public let deviceName: Swift.String
+  public let nickname: Swift.String
+  public let user: Swift.String
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct ResponseSilentLogin : Swift.Decodable {
+  public let auth: TapOnPhone.AuthSilentResponse
+  public let certs: [TapOnPhone.CertGroup]?
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AuthSilentResponse : Swift.Decodable {
+  public let document: Swift.String?
+  public let packageName: Swift.String?
+  public let acquirerMerchantCode: Swift.String?
+  public let type: Swift.String?
+  public let identification: Swift.String?
+  public let identificationType: Swift.String?
+  public let manufacturer: Swift.String?
+  public let model: Swift.String?
+  public let deviceName: Swift.String?
+  public let nickname: Swift.String?
+  public let user: Swift.String?
+  public let returnStatus: Swift.Int?
+  public let message: Swift.String?
+  public let terminalCode: Swift.String?
+  public let token: Swift.String?
+  public let params: [TapOnPhone.Param]?
+  public let storeName: Swift.String?
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Param : Swift.Decodable {
+  public let id: Swift.String?
+  public let value: Swift.String?
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct CertGroup : Swift.Decodable {
+  public let group: Swift.String?
+  public let items: [TapOnPhone.CertItem]?
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct CertItem : Swift.Decodable {
+  public let hash: Swift.String?
+  public let expiresAt: Swift.String?
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ConfigurationLoginSDK : Swift.Codable {
+  public var token: Swift.String?
+  public var certificatePath: Swift.String
+  public var md5ReceivedByServer: Swift.String
+  public var codeTerm: Swift.String?
+  public var getnetEC: Swift.String?
+  public var protocolValue: Swift.String
+  public var host: Swift.String
+  public var port: Swift.String
+  public var environmentCTF: Swift.String
+  public var cnpj: Swift.String
+  public var user: Swift.String
+  public var groupEC: Swift.String
+  public var storeName: Swift.String?
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct LoginResult {
+  public let isSuccessful: Swift.Bool
+  public let statusCode: Swift.Int
+  public let message: Swift.String
+  public let configuration: TapOnPhone.ConfigurationLoginSDK?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(isSuccessful: Swift.Bool, statusCode: Swift.Int, message: Swift.String, configuration: TapOnPhone.ConfigurationLoginSDK? = nil)
+  #endif
+  public static func success(_ configuration: TapOnPhone.ConfigurationLoginSDK) -> TapOnPhone.LoginResult
+  public static func fromLoginError(_ error: TapOnPhone.LoginError) -> TapOnPhone.LoginResult
+  public static func error(statusCode: Swift.Int, message: Swift.String) -> TapOnPhone.LoginResult
+}
+public struct CardData {
+  public let transactionId: Swift.String
+  public let paymentCardDataBase64: Swift.String?
+  public let outcomeDescription: Swift.String
+  public let generalCardData: Swift.String?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(transactionId: Swift.String, paymentCardDataBase64: Swift.String?, outcomeDescription: Swift.String, generalCardData: Swift.String?)
+  #endif
+}
+public enum CardReaderError : Swift.Error, Swift.CustomStringConvertible {
+  case notSupported
+  case prepareFailed(any Swift.Error)
+  case readFailed(any Swift.Error)
+  case cancelled
+  case accountNotLinked
+  public var description: Swift.String {
+    get
+  }
+  public var errorCode: Swift.Int {
+    get
+  }
+}
+public enum InstallmentType {
+  case store
+  case administrative
+  case upfront
+  case merchantInstallment
+  public static func == (a: TapOnPhone.InstallmentType, b: TapOnPhone.InstallmentType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum CardPaymentStatus {
+  case approved
+  case denied
+  case error
+  case unknown
+  case cancelled
+  public static func == (a: TapOnPhone.CardPaymentStatus, b: TapOnPhone.CardPaymentStatus) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct CardPaymentResult {
+  public let returnCode: Swift.String
+  public let customerReceipt: Swift.String
+  public let merchantReceipt: Swift.String
+  public let reducedReceipt: Swift.String
+  public let ctf: TapOnPhone.CTFResult
+  public let status: TapOnPhone.CardPaymentStatus
+  public var isApproved: Swift.Bool {
+    get
+  }
+  public var formattedAmount: Swift.String {
+    get
+  }
+  public init(returnCode: Swift.String, customerReceipt: Swift.String, merchantReceipt: Swift.String, reducedReceipt: Swift.String, ctf: TapOnPhone.CTFResult, status: TapOnPhone.CardPaymentStatus)
+}
+public struct CTFResult {
+  public let operationCode: Swift.String
+  public let establishmentCode: Swift.String
+  public let storeCode: Swift.String
+  public let terminalCode: Swift.String
+  public let authorizationCode: Swift.String
+  public let acquirerCode: Swift.String
+  public let authorizationResponseCode: Swift.String
+  public let extendedErrorCode: Swift.String
+  public let nsuCTF: Swift.String
+  public let nsuHost: Swift.String
+  public let brandName: Swift.String
+  public let acquirerName: Swift.String
+  public let maskedPan: Swift.String
+  public let installmentCount: Swift.Int
+  public let transactionNumber: Swift.Int
+  public let transactionDate: Swift.String
+  public let transactionTime: Swift.String
+  public let totalAmount: Foundation.Decimal
+  public let transactionAmount: Foundation.Decimal
+  public let displayMessages: [Swift.String]
+  public init(operationCode: Swift.String, establishmentCode: Swift.String, storeCode: Swift.String, terminalCode: Swift.String, authorizationCode: Swift.String, acquirerCode: Swift.String, authorizationResponseCode: Swift.String, extendedErrorCode: Swift.String, nsuCTF: Swift.String, nsuHost: Swift.String, brandName: Swift.String, acquirerName: Swift.String, maskedPan: Swift.String, installmentCount: Swift.Int, transactionNumber: Swift.Int, transactionDate: Swift.String, transactionTime: Swift.String, totalAmount: Foundation.Decimal, transactionAmount: Foundation.Decimal, displayMessages: [Swift.String])
+}
+extension TapOnPhone.CardPaymentResult {
+  public static var mock: TapOnPhone.CardPaymentResult {
+    get
+  }
+}
+public protocol TapOnPhoneMessageDelegate : AnyObject {
+  func tapOnPhoneDidReceiveMessage(_ message: TapOnPhone.TapOnPhoneMessage)
+}
+public protocol TapOnPhoneUIDelegate : AnyObject {
+  #if compiler(>=5.3) && $NonescapableTypes && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func requestKeyboard(_ request: TapOnPhone.KeyboardRequest) async -> Swift.String?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func showMenu(_ request: TapOnPhone.MenuRequest) async -> Swift.String?
+  #endif
+  func showMessage(_ request: TapOnPhone.MessageRequest)
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func showImage(_ request: TapOnPhone.ImageRequest) async -> Swift.Int
+  #endif
+}
+public enum TapOnPhoneMessageType : Swift.Sendable {
+  case info
+  case warning
+  case error
+  public static func == (a: TapOnPhone.TapOnPhoneMessageType, b: TapOnPhone.TapOnPhoneMessageType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct TapOnPhoneMessage : Swift.Sendable {
+  public let text: Swift.String
+  public let type: TapOnPhone.TapOnPhoneMessageType
+  public let canCancel: Swift.Bool
+  public let sleepSeconds: Swift.Float
+}
+public struct KeyboardRequest {
+  public let title: Swift.String
+  public let mask: Swift.String?
+  public let minLength: Swift.Int
+  public let maxLength: Swift.Int
+}
+public struct MenuRequest {
+  public let title: Swift.String
+  public let options: [Swift.String]
+}
+public struct MessageRequest {
+  public let message: Swift.String
+  public let canCancel: Swift.Bool
+  public let sleep: Swift.Float
+}
+public struct ImageRequest {
+  public let title: Swift.String?
+  public let firstLine: Swift.String?
+  public let secondLine: Swift.String?
+  public let data: Foundation.Data
+}
+public struct TapOnPhoneSDK {
+  public static var operations: any TapOnPhone.TapOnPhoneOperationsProtocol {
+    get
+  }
+  public static var configuration: any TapOnPhone.TapOnPhoneConfigurationProtocol {
+    get
+  }
+  weak public static var messageDelegate: (any TapOnPhone.TapOnPhoneMessageDelegate)?
+  weak public static var uiDelegate: (any TapOnPhone.TapOnPhoneUIDelegate)?
+}
+#if compiler(>=5.3) && $NonescapableTypes
+public func swift_exibir_mensagem_ios(identifier: Swift.UnsafeMutableRawPointer?, selector: Swift.UnsafeMutableRawPointer?, message: Swift.UnsafePointer<Swift.CChar>?, permite_cancelar: Swift.Int32, sleep_seconds: Swift.Float)
+#endif
+#if compiler(>=5.3) && $NonescapableTypes
+public func swift_ler_cancelamento_operador(_ identifier: Swift.UnsafeMutableRawPointer?, _ selector: Swift.UnsafeMutableRawPointer?) -> Swift.CInt
+#endif
+#if compiler(>=5.3) && $NonescapableTypes
+public func swift_prepare_reader(identifier: Swift.UnsafeMutableRawPointer?, selector: Swift.UnsafeMutableRawPointer?, jwtCreditToken: Swift.UnsafePointer<Swift.CChar>?, jwtDebitToken: Swift.UnsafePointer<Swift.CChar>?) -> Swift.Int32
+#endif
+#if compiler(>=5.3) && $NonescapableTypes
+public func swift_read_card(identifier: Swift.UnsafeMutableRawPointer?, selector: Swift.UnsafeMutableRawPointer?, amount: Swift.Double) -> Swift.Int32
+#endif
+public protocol ProximityReaderManagerProtocol {
+  func startReader(jwtCreditToken: Swift.String, jwtDebitToken: Swift.String)
+  func readCard(amount: Foundation.Decimal)
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func cancelReading() async
+  #endif
+}
+public protocol MonoECServiceProtocol {
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func authenticate(parameters: TapOnPhone.MonoECAuthParameters) async -> TapOnPhone.MonoECAuthResult
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getStoredConfiguration() -> TapOnPhone.MonoECConfiguration?
+  #endif
+  func clearStoredConfiguration()
+  var hasValidConfiguration: Swift.Bool { get }
+}
+public protocol SilentLoginParamsProtocol {
+  var tokens: TapOnPhone.AuthenticationTokens { get }
+  var appToken: Swift.String { get }
+  var document: Swift.String { get }
+  var packageName: Swift.String { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var deviceName: Swift.String? { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var nickName: Swift.String? { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var user: Swift.String? { get }
+  #endif
+}
+public struct SilentLoginParams : TapOnPhone.SilentLoginParamsProtocol {
+  public let tokens: TapOnPhone.AuthenticationTokens
+  public let appToken: Swift.String
+  public let packageName: Swift.String
+  public let deviceName: Swift.String?
+  public let nickName: Swift.String?
+  public let user: Swift.String?
+  public let document: Swift.String
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(tokens: TapOnPhone.AuthenticationTokens, appToken: Swift.String, packageName: Swift.String, document: Swift.String, deviceName: Swift.String? = nil, nickName: Swift.String? = nil, user: Swift.String? = nil)
+  #endif
+}
+public protocol TapOnPhoneAuthenticationServiceProtocol {
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func authenticate() async throws -> TapOnPhone.AuthenticationTokens
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getCurrentTokens() -> TapOnPhone.AuthenticationTokens?
+  #endif
+  func clearAuthentication()
+  func saveAndValidateToken(tokens: TapOnPhone.AuthenticationTokens) -> Swift.Bool
+  #if compiler(>=5.3) && $NonescapableTypes && $AsyncExecutionBehaviorAttributes
+  nonisolated(nonsending) func checkForExpiredToken() async throws -> Swift.String?
+  #endif
+}
+public enum Environment {
+  public static var baseURL: Swift.String {
+    get
+  }
+  public static var ssoClientId: Swift.String {
+    get
+  }
+  public static var ssoClientSecret: Swift.String {
+    get
+  }
+}
+public enum TransactionContextUtils {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func getSavedCNPJ() -> Swift.String?
+  #endif
+}
+extension TapOnPhone.SSORequest.CodingKeys : Swift.Equatable {}
+extension TapOnPhone.SSORequest.CodingKeys : Swift.Hashable {}
+extension TapOnPhone.SSORequest.CodingKeys : Swift.RawRepresentable {}
+extension TapOnPhone.TapOnPhoneRequest.CodingKeys : Swift.Equatable {}
+extension TapOnPhone.TapOnPhoneRequest.CodingKeys : Swift.Hashable {}
+extension TapOnPhone.TapOnPhoneRequest.CodingKeys : Swift.RawRepresentable {}
+extension TapOnPhone.SSOResponse.CodingKeys : Swift.Equatable {}
+extension TapOnPhone.SSOResponse.CodingKeys : Swift.Hashable {}
+extension TapOnPhone.SSOResponse.CodingKeys : Swift.RawRepresentable {}
+extension TapOnPhone.MonoECRequest.CodingKeys : Swift.Equatable {}
+extension TapOnPhone.MonoECRequest.CodingKeys : Swift.Hashable {}
+extension TapOnPhone.MonoECRequest.CodingKeys : Swift.RawRepresentable {}
+extension TapOnPhone.MonoECResponse.CodingKeys : Swift.Equatable {}
+extension TapOnPhone.MonoECResponse.CodingKeys : Swift.Hashable {}
+extension TapOnPhone.MonoECResponse.CodingKeys : Swift.RawRepresentable {}
+extension TapOnPhone.InstallmentType : Swift.Equatable {}
+extension TapOnPhone.InstallmentType : Swift.Hashable {}
+extension TapOnPhone.CardPaymentStatus : Swift.Equatable {}
+extension TapOnPhone.CardPaymentStatus : Swift.Hashable {}
+extension TapOnPhone.TapOnPhoneMessageType : Swift.Equatable {}
+extension TapOnPhone.TapOnPhoneMessageType : Swift.Hashable {}
